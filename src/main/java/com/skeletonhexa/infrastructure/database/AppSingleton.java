@@ -5,19 +5,19 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public enum AppSingleton {
-   INSTANCIA;
+    INSTANCIA;
 
     private final Properties propiedades = new Properties();
 
     AppSingleton() {
-        cargarConfiguraciones("config.properties");
+        cargarConfiguraciones("configmysql.properties");
     }
 
     private void cargarConfiguraciones(String rutaArchivo) {
         try (InputStream archivo = getClass().getClassLoader().getResourceAsStream(rutaArchivo)) {
-            
             if (archivo == null) {
-                System.err.println("❌ Error cargando configuración: Archivo no encontrado");    
+                System.err.println("❌ Error cargando configuración: Archivo no encontrado: " + rutaArchivo);
+                return; // Salir del método si el archivo no se encuentra
             }
 
             propiedades.load(archivo);

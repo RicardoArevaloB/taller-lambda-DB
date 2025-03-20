@@ -1,50 +1,65 @@
 package com.skeletonhexa;
 
 import java.util.Scanner;
-import com.skeletonhexa.infrastructure.database.ConnMySql;
+import com.skeletonhexa.infrastructure.database.ConnectMysqlFactory;
+import com.skeletonhexa.application.usecase.EquipoUsecase;
+import com.skeletonhexa.application.usecase.EstadisticasUsecase;
 import com.skeletonhexa.domain.repository.Equiporepository;
-import com.skeletonhexa.repository.Equiporepository;
-import com.skeletonhexa.infrastructure.persistence.ClientRepositoryImpl;
+import com.skeletonhexa.domain.repository.EstadisticasRepository;
+import com.skeletonhexa.domain.ui.Equipoui;
+import com.skeletonhexa.domain.ui.EstadisticasUi;
+import com.skeletonhexa.infrastructure.persistence.EquiporepositoryImpl;
+import com.skeletonhexa.infrastructure.persistence.EstadisticasrepositoryImpl;
 
 public class Main {
     public static void main(String[] args) {
+        Equiporepository repositorio = new EquiporepositoryImpl(ConnectMysqlFactory.crearConexion());
+        EstadisticasRepository repository = new EstadisticasrepositoryImpl(ConnectMysqlFactory.crearConexion());
 
-        // Crear la conexión y el repositorio para equipos
-        Equiporepository equiporepository = new EquiporepositoryImpl(ConnectionMySql.crearConexion());
+        EquipoUsecase EquipoCasodeUso = new EquipoUsecase(repositorio);
+        EstadisticasUsecase EstadistcasCasoDeuso = new EstadisticasUsecase(repository);
 
-        // Crear el caso de uso para equipos
-        EquipoUseCase equipoCasoUso = new EquipoUseCase(equipoRepositorio);
+        try (Scanner sc = new Scanner(System.in)) {
+            Equipoui interfazEquipo = new Equipoui(EquipoCasodeUso, sc);
+            EstadisticasUi interfazEstadisticas =new EstadisticasUi(EstadistcasCasoDeuso, sc);
 
-        // Scanner para la entrada de datos
-        Scanner sc = new Scanner(System.in);
+            int option;
 
-        // Crear la interfaz de usuario para equipos
-        EquipoUI interfazEquipo = new EquipoUI(equipoCasoUso, sc);
+            do{
+                System.out.println("**********************");
+                System.out.println("*   Menu principal   *");
+                System.out.println("**********************");
+                System.out.println("\n1. Menu crud Equipos");
+                System.out.println("2. Gestion de estadisticas por Equipo");
+                System.out.println("3. Salir");
+                option = sc.nextInt();
+                sc.nextLine();
 
-        int opcionPrincipal;
-        do {
-            System.out.println("**************************");
-            System.out.println("*     Menú Principal     *");
-            System.out.println("**************************");
-            System.out.println("\n1. Gestión de Equipos"); // Única opción
-            System.out.println("0. Salir");
-            System.out.print("Ingrese su opción: ");
-            opcionPrincipal = sc.nextInt();
-            sc.nextLine(); // Consumir la nueva línea
+                switch (option) {
+                    case 1:
+                        interfazEquipo.gestionarEquipos();
+                        break;
+                        
+                    case 2:
+                        interfazEstadisticas.gestionarEstadisticas();
+                        break;
+                    case 3:
+                        System.out.println("Saliendo del sistema.....");
+                        break;
+                    case 4:
+                        System.out.println("Saliendo del sistema.....");
+                        break;
+                
+                    default:
+                        break;
+                }
 
-            switch (opcionPrincipal) {
-                case 1:
-                    interfazEquipo.gestionarEquipos(); // Gestión de equipos
-                    break;
-                case 0:
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
-                    break;
-            }
-        } while (opcionPrincipal != 0);
 
-        sc.close();
+
+
+            }while (option != 4);
+
+            sc.close();
+        }
     }
 }
