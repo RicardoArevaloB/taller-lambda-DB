@@ -29,6 +29,15 @@ public class EquipoUsecase {
     public void actualizarEquipo(int id, String name, String yearfoundation, String coach){
         Equipo equipo = new Equipo(id, name, yearfoundation, coach);
         repository.actualizar(equipo);
+    
+    }
+
+    public void eliminarEquipo(int id){
+        repository.eliminar(id);
+    }
+
+    public Equipo buscarPorId(int id){
+        return repository.buscarPorId(id);
     }
 
 }
